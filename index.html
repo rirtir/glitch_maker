@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0c11">
+  <meta name="description" content="動画にデータモッシュやマクロブロックのグリッチをフレーム単位でかけられるブラウザツール">
+  <title>Glitch Maker</title>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- icon sprite -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <defs>
+      <symbol id="i-open" viewBox="0 0 24 24"><path d="M3 7.5A2.5 2.5 0 0 1 5.5 5H9l2 2h7.5A2.5 2.5 0 0 1 21 9.5v7A2.5 2.5 0 0 1 18.5 19h-13A2.5 2.5 0 0 1 3 16.5z"/><path d="M12 10.5v5M9.5 13l2.5-2.5 2.5 2.5"/></symbol>
+      <symbol id="i-export" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10l4.5 4.5 4.5-4.5"/><path d="M4 15.5v2A2.5 2.5 0 0 0 6.5 20h11a2.5 2.5 0 0 0 2.5-2.5v-2"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.6-2.2h4.8L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 17.5z"/><circle cx="12" cy="12.8" r="3.3"/></symbol>
+      <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .9-1 1.6v.6"/><circle cx="12" cy="17" r=".9" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-first" viewBox="0 0 24 24"><path d="M6 5v14"/><path d="M18.5 5.5 9 12l9.5 6.5z" fill="currentColor"/></symbol>
+      <symbol id="i-last" viewBox="0 0 24 24"><path d="M18 5v14"/><path d="M5.5 5.5 15 12l-9.5 6.5z" fill="currentColor"/></symbol>
+      <symbol id="i-back1" viewBox="0 0 24 24"><path d="M14.5 6 8.5 12l6 6"/></symbol>
+      <symbol id="i-back10" viewBox="0 0 24 24"><path d="M12 6 6 12l6 6M18 6l-6 6 6 6"/></symbol>
+      <symbol id="i-back30" viewBox="0 0 24 24"><path d="M9 6 3 12l6 6M15 6l-6 6 6 6M21 6l-6 6 6 6"/></symbol>
+      <symbol id="i-fwd1" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6"/></symbol>
+      <symbol id="i-fwd10" viewBox="0 0 24 24"><path d="m12 6 6 6-6 6M6 6l6 6-6 6"/></symbol>
+      <symbol id="i-fwd30" viewBox="0 0 24 24"><path d="m15 6 6 6-6 6M9 6l6 6-6 6M3 6l6 6-6 6"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.2v13.6a.6.6 0 0 0 .9.5l10.6-6.8a.6.6 0 0 0 0-1L8.9 4.7a.6.6 0 0 0-.9.5z" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="4" height="14" rx="1" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-trial" viewBox="0 0 24 24"><path d="M10 8.6v6.8a.4.4 0 0 0 .6.3l5.3-3.4a.4.4 0 0 0 0-.6l-5.3-3.4a.4.4 0 0 0-.6.3z" fill="currentColor" stroke="none"/><path d="M4.3 13.5A8 8 0 1 0 6.4 6.3"/><path d="M6.8 2.8v3.8h3.8" /></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M4 4l16 16"/><path d="M9.9 5.8A9.4 9.4 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a16 16 0 0 1-2.7 3.4M6.3 7.4A15.7 15.7 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.5 0 2.9-.4 4.1-1"/><path d="M9.9 10a3 3 0 0 0 4.1 4.1"/></symbol>
+      <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 14.5 6-6 6 6"/></symbol>
+      <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9.5 6 6 6-6"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V5h5v2M6.5 7l.8 12a1.5 1.5 0 0 0 1.5 1.4h6.4a1.5 1.5 0 0 0 1.5-1.4l.8-12M10 11v5.5M14 11v5.5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 9v12"/><path d="M7.5 3h9L12 8.5z" fill="currentColor"/><path d="M8 21h8"/></symbol>
+      <symbol id="i-goto" viewBox="0 0 24 24"><path d="M3.5 12h11M10.5 7.5 15 12l-4.5 4.5"/><path d="M19.5 4.5v15"/></symbol>
+      <symbol id="i-infinity" viewBox="0 0 24 24"><path d="M6.8 9.2a2.8 2.8 0 1 0 0 5.6c2.1 0 3.3-1.6 5.2-2.8s3.1-2.8 5.2-2.8a2.8 2.8 0 1 1 0 5.6c-2.1 0-3.3-1.6-5.2-2.8S8.9 9.2 6.8 9.2z"/></symbol>
+      <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M10.5 7.5v6M7.5 10.5h6"/></symbol>
+      <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6"/></symbol>
+      <symbol id="i-fit" viewBox="0 0 24 24"><path d="M3.5 8.5v-4h4M20.5 8.5v-4h-4M3.5 15.5v4h4M20.5 15.5v4h-4"/><path d="M7 12h10M9.5 9.5 7 12l2.5 2.5M14.5 9.5 17 12l-2.5 2.5"/></symbol>
+      <symbol id="i-dice" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3.5"/><g fill="currentColor" stroke="none"><circle cx="8.5" cy="8.5" r="1.4"/><circle cx="15.5" cy="15.5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="15.5" cy="8.5" r="1.4"/><circle cx="8.5" cy="15.5" r="1.4"/></g></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3.5 9 5-9 5-9-5z"/><path d="m3 12.5 9 5 9-5"/><path d="m3 16.5 9 5 9-5" opacity=".5"/></symbol>
+      <symbol id="i-film" viewBox="0 0 24 24"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M7.5 4.5v15M16.5 4.5v15M3.5 9h4M3.5 15h4M16.5 9h4M16.5 15h4"/></symbol>
+      <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3.5v11M8 7.5l4-4 4 4"/><path d="M6.5 11H6a2 2 0 0 0-2 2v5.5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V13a2 2 0 0 0-2-2h-.5"/></symbol>
+      <symbol id="i-fx-mosh" viewBox="0 0 24 24"><path d="M4 4h16v7c0 1.5-1.2 1.5-1.8.5s-1.4-1.3-2 .2l-1 3c-.6 1.6-2 1.6-2.4 0l-.6-2.4c-.4-1.4-1.8-1.4-2.2 0l-1 4.2c-.4 1.6-1.9 1.6-2.2 0L6 12c-.3-1.3-1.2-1.3-1.6-.2L4 13z"/><path d="M7 7.5h3M13 7.5h4" opacity=".6"/></symbol>
+      <symbol id="i-fx-block" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7" fill="currentColor" fill-opacity=".35"/><rect x="5.5" y="13.5" width="7" height="7" fill="currentColor" fill-opacity=".35"/><rect x="14.5" y="14.5" width="6" height="6"/></symbol>
+      <symbol id="i-source" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2"/><path d="m10 9.5 4.5 2.5-4.5 2.5z" fill="currentColor"/></symbol>
+      <symbol id="i-keyboard" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9 10h.01M12 10h.01M15 10h.01M18 10h.01M7 14h10"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app" id="app">
+    <header class="topbar">
+      <div class="brand" aria-label="Glitch Maker">
+        <img src="icons/logo.svg" alt="" width="28" height="28">
+        <span class="brand-text" data-text="GLITCH MAKER">GLITCH MAKER</span>
+      </div>
+      <div class="top-actions">
+        <button class="tbtn" id="btnOpen" title="動画を開く"><svg><use href="#i-open"/></svg><span>開く</span></button>
+        <button class="tbtn" id="btnStill" title="現在のフレームを画像で保存" disabled><svg><use href="#i-camera"/></svg><span>静止画</span></button>
+        <button class="tbtn accent" id="btnExport" title="動画を書き出す" disabled><svg><use href="#i-export"/></svg><span>書き出し</span></button>
+        <button class="tbtn icon-only" id="btnHelp" title="使い方"><svg><use href="#i-help"/></svg></button>
+      </div>
+      <input type="file" id="fileInput" accept="video/*,.mp4,.mov,.webm,.mkv,.m4v" hidden>
+    </header>
+
+    <section class="stage" id="stage">
+      <div class="viewer" id="viewer">
+        <canvas id="view" width="16" height="9"></canvas>
+        <div class="empty" id="empty">
+          <svg class="empty-icon"><use href="#i-film"/></svg>
+          <p class="empty-title">動画を読み込んでください</p>
+          <button class="btn primary" id="btnOpen2"><svg><use href="#i-open"/></svg>動画を選択</button>
+          <p class="empty-sub">またはここにドラッグ＆ドロップ</p>
+        </div>
+        <div class="badge trial-badge" id="trialBadge" hidden><svg><use href="#i-trial"/></svg>お試し再生中 — 停止で <b id="trialReturn">F0</b> に戻ります</div>
+        <div class="busy" id="busy" hidden><span class="spinner"></span><span id="busyText">計算中</span></div>
+        <div class="drop-overlay" id="dropOverlay" hidden>ここにドロップ</div>
+      </div>
+
+      <div class="timebar">
+        <div class="timecode">
+          <button class="mini" id="btnFirst" title="最初のフレーム (Home)"><svg><use href="#i-first"/></svg></button>
+          <label class="frame-input-wrap" title="フレーム番号を直接入力">
+            <span class="f-label">F</span>
+            <input id="frameInput" type="number" inputmode="numeric" min="0" value="0">
+            <span class="f-total" id="frameTotal">/ 0</span>
+          </label>
+          <span class="time" id="timeText">00:00.000</span>
+          <button class="mini" id="btnLast" title="最後のフレーム (End)"><svg><use href="#i-last"/></svg></button>
+        </div>
+        <div class="zoom-ctl">
+          <span class="zoom-text" id="zoomText"></span>
+          <button class="mini" id="btnZoomOut" title="縮小 (-)"><svg><use href="#i-zoom-out"/></svg></button>
+          <button class="mini" id="btnZoomIn" title="拡大 (+)"><svg><use href="#i-zoom-in"/></svg></button>
+          <button class="mini" id="btnZoomFit" title="全体を表示 (0)"><svg><use href="#i-fit"/></svg></button>
+        </div>
+      </div>
+
+      <div class="timeline-wrap">
+        <canvas id="timeline" class="timeline" aria-label="シークバー。左右ドラッグで移動、上下ドラッグで拡大縮小"></canvas>
+        <div class="tl-hint" id="tlHint">左右でシーク ／ 押したまま<b>上へ</b>で拡大・<b>下へ</b>で縮小</div>
+      </div>
+
+      <div class="transport" id="transport">
+        <button class="tp step" data-step="-30" title="30フレーム戻る (Ctrl/Alt+←)"><svg><use href="#i-back30"/></svg><small>30</small></button>
+        <button class="tp step" data-step="-10" title="10フレーム戻る (Shift+←)"><svg><use href="#i-back10"/></svg><small>10</small></button>
+        <button class="tp step" data-step="-1" title="1フレーム戻る (←)"><svg><use href="#i-back1"/></svg><small>1</small></button>
+        <button class="tp play" id="btnPlay" title="再生／一時停止 (Space)：選択フレームも一緒に進みます"><svg><use href="#i-play"/></svg><small>再生</small></button>
+        <button class="tp trial" id="btnTrial" title="お試し再生 (Enter)：停止すると元のフレームに戻ります"><svg><use href="#i-trial"/></svg><small>お試し</small></button>
+        <button class="tp step" data-step="1" title="1フレーム進む (→)"><svg><use href="#i-fwd1"/></svg><small>1</small></button>
+        <button class="tp step" data-step="10" title="10フレーム進む (Shift+→)"><svg><use href="#i-fwd10"/></svg><small>10</small></button>
+        <button class="tp step" data-step="30" title="30フレーム進む (Ctrl/Alt+→)"><svg><use href="#i-fwd30"/></svg><small>30</small></button>
+      </div>
+    </section>
+
+    <aside class="panel" id="panel">
+      <div class="panel-head">
+        <h2><svg><use href="#i-layers"/></svg>レイヤー</h2>
+        <div class="add-wrap">
+          <button class="btn primary small" id="btnAddLayer" disabled><svg><use href="#i-plus"/></svg>エフェクト追加</button>
+          <div class="add-menu" id="addMenu" hidden></div>
+        </div>
+      </div>
+      <p class="panel-note">上のレイヤーほど後から適用されます。新しいエフェクトは<b>現在のフレームから</b>始まります。</p>
+      <ul class="layer-list" id="layerList"></ul>
+      <div class="props" id="props"></div>
+    </aside>
+  </div>
+
+  <!-- load dialog -->
+  <dialog class="dlg" id="loadDlg">
+    <form method="dialog" class="dlg-body" id="loadForm">
+      <h3>動画の読み込み</h3>
+      <div class="info-grid" id="loadInfo"></div>
+      <label class="field">
+        <span>処理解像度（長辺）</span>
+        <select id="loadRes"></select>
+        <small>大きいほど高画質ですが、処理が重くなります。書き出しもこの解像度になります。</small>
+      </label>
+      <div class="field two">
+        <label><span>開始（秒）</span><input type="number" id="loadStart" min="0" step="0.1" value="0"></label>
+        <label><span>終了（秒）</span><input type="number" id="loadEnd" min="0" step="0.1" value="0"></label>
+      </div>
+      <label class="field" id="loadFpsField" hidden>
+        <span>フレームレート（自動検出できない形式）</span>
+        <input type="number" id="loadFps" min="1" max="240" step="0.001" value="30">
+      </label>
+      <p class="estimate" id="loadEstimate"></p>
+      <div class="progress" id="loadProgress" hidden><div class="bar"><i id="loadBar"></i></div><span id="loadProgText"></span></div>
+      <div class="dlg-actions">
+        <button type="button" class="btn" id="loadCancel">キャンセル</button>
+        <button type="submit" class="btn primary" id="loadGo">読み込む</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- export dialog -->
+  <dialog class="dlg" id="exportDlg">
+    <form method="dialog" class="dlg-body" id="exportForm">
+      <h3>動画を書き出す</h3>
+      <div class="field">
+        <span>範囲</span>
+        <div class="seg" id="expRangeSeg">
+          <label><input type="radio" name="expRange" value="all" checked><span>全体</span></label>
+          <label><input type="radio" name="expRange" value="custom"><span>範囲指定</span></label>
+        </div>
+      </div>
+      <div class="field two" id="expCustom" hidden>
+        <label><span>開始フレーム</span><div class="inline"><input type="number" id="expStart" min="0"><button type="button" class="mini" id="expStartPin" title="現在位置"><svg><use href="#i-pin"/></svg></button></div></label>
+        <label><span>終了フレーム</span><div class="inline"><input type="number" id="expEnd" min="0"><button type="button" class="mini" id="expEndPin" title="現在位置"><svg><use href="#i-pin"/></svg></button></div></label>
+      </div>
+      <label class="field">
+        <span>画質</span>
+        <select id="expQuality">
+          <option value="very-high">最高</option>
+          <option value="high" selected>高</option>
+          <option value="medium">中</option>
+          <option value="low">低</option>
+        </select>
+      </label>
+      <label class="check" id="expAudioWrap"><input type="checkbox" id="expAudio" checked><span>元の音声を含める</span></label>
+      <p class="estimate" id="expInfo"></p>
+      <div class="progress" id="expProgress" hidden><div class="bar"><i id="expBar"></i></div><span id="expProgText"></span></div>
+      <div class="result" id="expResult" hidden></div>
+      <div class="dlg-actions">
+        <button type="button" class="btn" id="expCancel">閉じる</button>
+        <button type="submit" class="btn primary" id="expGo"><svg><use href="#i-export"/></svg>書き出す</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- help dialog -->
+  <dialog class="dlg wide" id="helpDlg">
+    <form method="dialog" class="dlg-body">
+      <h3>使い方</h3>
+      <ol class="help-steps">
+        <li><b>動画を開く</b>：「開く」または画面へドラッグ＆ドロップ。</li>
+        <li><b>グリッチを始めたいフレームへ移動</b>：シークバー／ボタンで細かく合わせます。</li>
+        <li><b>エフェクト追加</b>：現在のフレームから効果が始まります。開始・終了は <svg class="inl"><use href="#i-pin"/></svg> ボタンで現在位置に設定できます。</li>
+        <li><b>お試し再生</b> <svg class="inl"><use href="#i-trial"/></svg> で結果を確認。停止すると元のフレームに戻ります。</li>
+        <li><b>書き出し</b>で動画ファイルとして保存。</li>
+      </ol>
+      <h4>シークバー</h4>
+      <ul class="help-list">
+        <li>左右ドラッグ：フレーム移動</li>
+        <li>押したまま<b>上へ</b>：拡大（細かく）／<b>下へ</b>：縮小</li>
+        <li>2本指ピンチ・マウスホイール：拡大縮小、横スクロール：表示位置の移動</li>
+        <li>ダブルクリック／ダブルタップ：全体表示</li>
+        <li>上部の細いバー：全体の中の表示範囲。タップでその位置へジャンプ</li>
+      </ul>
+      <h4>キーボード</h4>
+      <dl class="keys">
+        <dt><kbd>Space</kbd></dt><dd>再生／停止</dd>
+        <dt><kbd>Enter</kbd></dt><dd>お試し再生</dd>
+        <dt><kbd>←</kbd><kbd>→</kbd></dt><dd>1フレーム移動</dd>
+        <dt><kbd>Shift</kbd>+<kbd>←</kbd><kbd>→</kbd></dt><dd>10フレーム移動</dd>
+        <dt><kbd>Alt</kbd>/<kbd>Ctrl</kbd>+<kbd>←</kbd><kbd>→</kbd></dt><dd>30フレーム移動</dd>
+        <dt><kbd>Home</kbd><kbd>End</kbd></dt><dd>最初／最後のフレーム</dd>
+        <dt><kbd>+</kbd><kbd>-</kbd><kbd>0</kbd></dt><dd>シークバーの拡大／縮小／全体表示</dd>
+        <dt><kbd>[</kbd><kbd>]</kbd></dt><dd>選択中レイヤーの開始／終了を現在位置に</dd>
+        <dt><kbd>Esc</kbd></dt><dd>再生を止める</dd>
+      </dl>
+      <p class="help-note">処理はすべてブラウザ内で行われ、動画がサーバーに送信されることはありません。</p>
+      <div class="dlg-actions"><button class="btn primary">閉じる</button></div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" hidden></div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
