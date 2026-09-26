@@ -167,7 +167,15 @@ export class Timeline {
       const [a, b] = [...this.pointers.values()];
       const mid = (a.x + b.x) / 2;
       this.pinch = { dist: Math.max(10, Math.abs(a.x - b.x)), ppf: this.ppf, frame: this.frameAt(mid) };
-      if (this.drag) this.endDrag();
+      if (this.drag) {
+        // the first finger of a pinch shouldn't move the playhead
+        const d = this.drag;
+        if (performance.now() - d.t < 300 && d.prevFrame !== this.current) {
+          this.current = d.prevFrame;
+          this.host.onScrub(d.prevFrame);
+        }
+        this.endDrag();
+      }
       return;
     }
     if (this.pointers.size > 2) return;
@@ -188,7 +196,7 @@ export class Timeline {
       this.jumpOverview(f);
       return;
     }
-    this.drag = { id: e.pointerId, startY: p.y, startPpf: this.ppf, lastX: p.x, pos: this.frameAt(p.x), zooming: false, t: performance.now() };
+    this.drag = { id: e.pointerId, startY: p.y, startPpf: this.ppf, lastX: p.x, pos: this.frameAt(p.x), zooming: false, t: performance.now(), prevFrame: this.current };
     this.scrubTo(p.x);
     this.startAutoPan();
   }
